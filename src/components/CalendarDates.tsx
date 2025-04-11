@@ -18,12 +18,11 @@ function CalendarDates() {
                 {DAY_ABBREVS[index]}
               </span>
               <div className="relative mt-1 flex items-center justify-center">
-                {isActive && (
-                  <div className="absolute w-8 h-8 rounded-full bg-red-500" />
-                )}
                 <span
-                  className={`z-10 text-base font-medium ${
-                    isActive ? "text-white" : "text-gray-800"
+                  className={`flex items-center justify-center z-10 text-base font-medium rounded-full w-8 h-8 transition-colors ${
+                    isActive
+                      ? "text-white bg-red-500"
+                      : "text-gray-800 hover:bg-gray-100"
                   }`}>
                   {date.getDate()}
                 </span>
