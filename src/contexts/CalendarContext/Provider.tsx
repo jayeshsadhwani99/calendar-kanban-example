@@ -1,56 +1,7 @@
-// CalendarContext.tsx
-
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  ReactNode,
-} from "react";
-
-// Utility: Returns a new Date with added days.
-const addDays = (date: Date, days: number): Date => {
-  const result = new Date(date);
-  result.setDate(result.getDate() + days);
-  return result;
-};
-
-// Utility: Get the Monday of the week (week runs Monday–Sunday).
-const getStartOfWeek = (date: Date): Date => {
-  const day = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-  // If today is Sunday, subtract 6 days; otherwise, subtract (day - 1)
-  const diff = day === 0 ? -6 : 1 - day;
-  const monday = addDays(date, diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday;
-};
-
-interface CalendarContextProps {
-  weekStart: Date;
-  selectedDayIndex: number;
-  weekDirection: number;
-  weekDates: Date[];
-  activeDate: Date;
-  handleDayClick: (index: number) => void;
-  goToPreviousWeek: () => void;
-  goToNextWeek: () => void;
-}
-
-const CalendarContext = createContext<CalendarContextProps | undefined>(
-  undefined,
-);
-
-export const useCalendar = (): CalendarContextProps => {
-  const context = useContext(CalendarContext);
-  if (context === undefined) {
-    throw new Error("useCalendar must be used within a CalendarProvider");
-  }
-  return context;
-};
-
-interface CalendarProviderProps {
-  children: ReactNode;
-}
+import { useCallback, useState } from "react";
+import { addDays, getStartOfWeek } from "../../utils";
+import { CalendarProviderProps } from "./types";
+import { CalendarContext } from "./Context";
 
 export const CalendarProvider: React.FC<CalendarProviderProps> = ({
   children,
