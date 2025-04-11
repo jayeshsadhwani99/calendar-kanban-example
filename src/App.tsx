@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useCallback } from "react";
 import { useCalendar } from "./contexts";
-import Header from "./components/Header";
 import Day from "./components/Day";
+import CalendarDates from "./components/CalendarDates";
+import Header from "./components/Header";
 
 const App: React.FC = () => {
   const {
@@ -76,8 +77,8 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header with day buttons */}
       <Header />
+      <CalendarDates />
 
       {/* Main content area with day views */}
       <main className="flex-1 overflow-hidden">

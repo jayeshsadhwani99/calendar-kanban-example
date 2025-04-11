@@ -1,56 +1,31 @@
-import { DAY_ABBREVS } from "../constants";
+import { MONTHS } from "../constants";
 import { useCalendar } from "../contexts";
 
 function Header() {
-  const {
-    weekDates,
-    activeDate,
-    handleDayClick,
-    goToPreviousWeek,
-    goToNextWeek,
-  } = useCalendar();
+  const { activeDate, goToPreviousWeek, goToNextWeek } = useCalendar();
+  const month = MONTHS[activeDate.getMonth()];
+  const year = activeDate.getFullYear();
 
   return (
-    <header className="sticky top-0 bg-white border-b z-10 px-4 py-3 shadow-sm flex items-center">
-      <button
-        className="hidden md:flex text-2xl p-2 hover:bg-gray-100 rounded-full transition-colors"
-        onClick={goToPreviousWeek}
-        aria-label="Previous Week">
-        ←
-      </button>
-      <div className="flex flex-1 justify-between relative">
-        {weekDates.map((date, index) => {
-          const isActive = date.toDateString() === activeDate.toDateString();
-          return (
-            <div
-              key={date.toDateString()}
-              className="flex flex-col items-center cursor-pointer px-2"
-              onClick={() => handleDayClick(index)}>
-              <span className="text-xs uppercase text-gray-500">
-                {DAY_ABBREVS[index]}
-              </span>
-              <div className="relative mt-1 flex items-center justify-center">
-                {isActive && (
-                  <div className="absolute w-8 h-8 rounded-full bg-red-500" />
-                )}
-                <span
-                  className={`z-10 text-base font-medium ${
-                    isActive ? "text-white" : "text-gray-800"
-                  }`}>
-                  {date.getDate()}
-                </span>
-              </div>
-            </div>
-          );
-        })}
+    <div className="sticky top-0 bg-white border-b z-10 px-4 py-3 flex items-center gap-2">
+      <div className="flex items-center gap-2">
+        <button
+          className="flex w-10 h-10 items-center justify-center text-2xl p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+          onClick={goToPreviousWeek}
+          aria-label="Previous Week">
+          ←
+        </button>
+        <button
+          className="flex w-10 h-10 items-center justify-center text-2xl p-2 hover:bg-gray-100 rounded-full transition-colors cursor-pointer"
+          onClick={goToNextWeek}
+          aria-label="Next Week">
+          →
+        </button>
       </div>
-      <button
-        className="hidden md:flex text-2xl p-2 hover:bg-gray-100 rounded-full transition-colors"
-        onClick={goToNextWeek}
-        aria-label="Next Week">
-        →
-      </button>
-    </header>
+      <h2 className="font-semibold text-2xl">
+        {month} {year}
+      </h2>
+    </div>
   );
 }
 
