@@ -7,4 +7,5 @@ export type CalendarContextProps = {
   handleDayClick: (index: number) => void;
   goToPreviousWeek: () => void;
   goToNextWeek: () => void;
+  handleTodayClick: () => void;
 };
