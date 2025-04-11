@@ -6,12 +6,11 @@ import Header from "./components/Header";
 import { useActiveDateOnScroll } from "./hooks";
 
 const App: React.FC = () => {
-  const { weekDates, setActiveDate } = useCalendar();
+  const { weekDates } = useCalendar();
   const mainRef = useRef<HTMLDivElement>(null);
 
   useActiveDateOnScroll({
     containerRef: mainRef,
-    setActiveDate,
     debounceDelay: 150, // optional, defaults to 150ms.
   });
 

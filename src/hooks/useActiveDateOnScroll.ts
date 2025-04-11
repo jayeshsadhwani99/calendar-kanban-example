@@ -1,16 +1,16 @@
 import { useEffect, useRef, useCallback, RefObject } from "react";
+import { useCalendar } from "../contexts";
 
 interface UseActiveDateOnScrollProps {
   containerRef: RefObject<HTMLElement | null>;
-  setActiveDate: (date: Date) => void;
   debounceDelay?: number;
 }
 
 export function useActiveDateOnScroll({
   containerRef,
-  setActiveDate,
   debounceDelay = 150,
 }: UseActiveDateOnScrollProps) {
+  const { setActiveDate } = useCalendar();
   const scrollTimeoutRef = useRef<number | null>(null);
 
   const handleScroll = useCallback(() => {
