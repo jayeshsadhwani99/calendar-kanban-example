@@ -12,7 +12,7 @@ function CalendarDates() {
           return (
             <div
               key={date.toDateString()}
-              className="flex-1 flex flex-col items-center gap-1 cursor-pointer px-2"
+              className="flex-1 flex flex-col items-center gap-1 cursor-pointer"
               onClick={() => handleDayClick(index)}>
               <span className="text-xs uppercase text-gray-500">
                 {DAY_ABBREVS[index]}

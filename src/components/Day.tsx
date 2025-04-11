@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useCalendar } from "../contexts";
 
 type DayProps = {
@@ -6,28 +6,25 @@ type DayProps = {
   index: number;
 };
 
-function Day({ date, index }: DayProps) {
-  const { selectedDayIndex } = useCalendar();
-
-  // Refs for day containers (for mobile scroll snapping)
-  const dayRefs = useRef<Array<HTMLDivElement | null>>([]);
+function Day({ date }: DayProps) {
+  const { activeDate } = useCalendar();
 
   useEffect(() => {
-    if (window.innerWidth < 768 && dayRefs.current[selectedDayIndex]) {
-      dayRefs.current[selectedDayIndex]?.scrollIntoView({
+    const element = document.getElementById(`day-${date.toDateString()}`);
+    if (element && date.toDateString() === activeDate.toDateString()) {
+      element.scrollIntoView({
         behavior: "smooth",
+        block: "nearest",
         inline: "center",
       });
     }
-  }, [selectedDayIndex]);
+  }, [activeDate]);
 
   return (
     <div
       key={date.toDateString()}
-      ref={(el) => {
-        dayRefs.current[index] = el;
-      }}
-      className="snap-start snap-always flex-shrink-0 md:flex-grow w-screen md:w-auto h-full border-r last:border-r-0 bg-white">
+      id={`day-${date.toDateString()}`}
+      className="snap-start snap-always flex-shrink-0 md:flex-grow w-full md:w-auto h-full border-r last:border-r-0 bg-white">
       <div className="w-full h-full flex items-center justify-center text-2xl font-semibold text-gray-700">
         Content for {date.toDateString()}
       </div>
