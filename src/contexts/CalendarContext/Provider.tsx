@@ -27,16 +27,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     setSelectedDayIndex(index);
   }, []);
 
-  // Function to reset the calendar to today.
-  const handleTodayClick = useCallback(() => {
-    const newToday = new Date();
-    const newWeekStart = getStartOfWeek(newToday);
-    // Adjust day index: if Sunday (0) then set index to 6, else day-1
-    const newIndex = newToday.getDay() === 0 ? 6 : newToday.getDay() - 1;
-    setWeekStart(newWeekStart);
-    setSelectedDayIndex(newIndex);
-  }, []);
-
   // Navigate to the previous week and update week direction
   const goToPreviousWeek = useCallback(() => {
     setWeekDirection(-1);
@@ -49,6 +39,14 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     setWeekStart((prev) => addDays(prev, 7));
   }, []);
 
+  const setActiveDate = useCallback((date: Date) => {
+    const newWeekStart = getStartOfWeek(date);
+    // Adjust day index: if Sunday (0) then set index to 6, else day-1
+    const newIndex = date.getDay() === 0 ? 6 : date.getDay() - 1;
+    setWeekStart(newWeekStart);
+    setSelectedDayIndex(newIndex);
+  }, []);
+
   return (
     <CalendarContext.Provider
       value={{
@@ -58,7 +56,7 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
         weekDates,
         activeDate,
         handleDayClick,
-        handleTodayClick,
+        setActiveDate,
         goToPreviousWeek,
         goToNextWeek,
       }}>
