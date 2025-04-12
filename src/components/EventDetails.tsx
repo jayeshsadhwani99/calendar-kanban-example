@@ -1,14 +1,13 @@
 import { motion } from "motion/react";
 import { Link } from "react-router-dom";
-import events from "../data/demo";
+import { findEventById } from "../utils";
 
 type EventDetailsProps = {
   id: string;
 };
 
 function EventDetails({ id }: EventDetailsProps) {
-  const eventsList = Object.values(events)[1];
-  const event = eventsList.find((event) => event.id === id);
+  const event = findEventById(id);
 
   if (!event) return;
 

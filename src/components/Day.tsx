@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { useCalendar } from "../contexts";
 import Event from "./Event";
-import events from "../data/demo";
 import { motion } from "motion/react";
+import { getEventsForDate } from "../utils";
 
 type DayProps = {
   date: Date;
@@ -12,10 +12,7 @@ type DayProps = {
 function Day({ date }: DayProps) {
   const { activeDate } = useCalendar();
 
-  const eventsList =
-    activeDate.toDateString() === date.toDateString()
-      ? Object.values(events)[1]
-      : [];
+  const eventsList = getEventsForDate(date);
 
   useEffect(() => {
     const element = document.getElementById(`day-${date.toDateString()}`);

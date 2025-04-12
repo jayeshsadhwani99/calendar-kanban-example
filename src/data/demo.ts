@@ -6,12 +6,12 @@ export interface Event {
   time: string;
 }
 
-interface EventsByDate {
+export interface EventsByDate {
   [date: string]: Event[];
 }
 
 const events: EventsByDate = {
-  "2024-03-11": [
+  "2025-04-11": [
     {
       id: "event-1",
       title: "Coffee with Alex",
@@ -31,7 +31,7 @@ const events: EventsByDate = {
       time: "02:00 PM",
     },
   ],
-  "2024-03-12": [
+  "2025-04-12": [
     {
       id: "event-3",
       title: "Yoga Session",
@@ -51,7 +51,7 @@ const events: EventsByDate = {
       time: "03:30 PM",
     },
   ],
-  "2024-03-13": [
+  "2025-04-13": [
     {
       id: "event-5",
       title: "Client Meeting",
