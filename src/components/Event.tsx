@@ -7,12 +7,12 @@ function Event({ id, title, description, imageUrl, time }: EventType) {
     <motion.div
       id={id}
       layoutId={`event-container-${id}`}
-      className="group relative flex flex-col shadow-sm rounded-xl overflow-hidden cursor-pointer transition-transform">
+      className="group relative flex flex-col shadow-sm rounded-xl overflow-hidden cursor-pointer">
       <motion.div layout layoutId={`event-image-container-${id}`}>
         <img
           src={imageUrl}
           alt={title}
-          className="rounded w-full h-32 object-cover transform transition-transform duration-300 group-hover:scale-105"
+          className="rounded w-full h-32 object-cover duration-300 group-hover:scale-105"
         />
       </motion.div>
       <motion.div

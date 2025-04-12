@@ -3,7 +3,7 @@ export type CalendarContextProps = {
   selectedDayIndex: number;
   weekDirection: number;
   weekDates: Date[];
-  activeDate: Date;
+  // activeDate: Date;
   handleDayClick: (index: number) => void;
   goToPreviousWeek: () => void;
   goToNextWeek: () => void;

@@ -1,72 +1,78 @@
-import { useEffect, useRef, useCallback, RefObject } from "react";
+import { useEffect } from "react";
 import { useCalendar } from "../contexts";
+import { isMobile } from "../utils";
 
 interface UseActiveDateOnScrollProps {
-  containerRef: RefObject<HTMLElement | null>;
-  debounceDelay?: number;
+  containerRef: React.RefObject<HTMLElement | null>;
 }
 
 export function useActiveDateOnScroll({
   containerRef,
-  debounceDelay = 150,
 }: UseActiveDateOnScrollProps) {
-  const { setActiveDate } = useCalendar();
-  const scrollTimeoutRef = useRef<number | null>(null);
-
-  const handleScroll = useCallback(() => {
-    if (scrollTimeoutRef.current) {
-      clearTimeout(scrollTimeoutRef.current);
-    }
-    scrollTimeoutRef.current = window.setTimeout(() => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      // Compute container center.
-      const containerRect = container.getBoundingClientRect();
-      const containerCenter = containerRect.left + containerRect.width / 2;
-
-      let closestElem: HTMLElement | null = null;
-      let minDistance = Infinity;
-
-      // Find all elements with an id that starts with "day-".
-      const dayElements = container.querySelectorAll('[id^="day-"]');
-      dayElements.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        const dayCenter = rect.left + rect.width / 2;
-        const distance = Math.abs(containerCenter - dayCenter);
-        if (distance < minDistance) {
-          minDistance = distance;
-          closestElem = el as HTMLElement;
-        }
-      });
-
-      if (closestElem) {
-        // Remove the "day-" prefix and trim the string.
-        const dateString = (closestElem as HTMLElement).id
-          .replace("day-", "")
-          .trim();
-        const newActiveDate = new Date(dateString);
-        setActiveDate(newActiveDate);
-      }
-    }, debounceDelay);
-  }, [containerRef, setActiveDate, debounceDelay]);
+  const { setActiveDate, goToPreviousWeek, goToNextWeek, weekStart } =
+    useCalendar();
 
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
-    // Create an AbortController to manage the event listener.
-    const controller = new AbortController();
-    const signal = controller.signal;
+    // Observe day elements (they have IDs that start with "day-").
+    const dayElements = container.querySelectorAll('[id^="day-"]');
 
-    container.addEventListener("scroll", handleScroll, { signal });
+    const dayObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // When a day is mostly visible, make it the active date.
+          if (entry.intersectionRatio >= 0.8) {
+            const dateString = entry.target.id.replace("day-", "").trim();
+            const newActiveDate = new Date(dateString);
+            setActiveDate(newActiveDate);
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 0.8,
+      },
+    );
 
-    // Cleanup: abort the event listener and clear the timeout.
-    return () => {
-      controller.abort();
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
+    dayElements.forEach((el) => dayObserver.observe(el));
+
+    // If running on mobile, set up buffer observers for week edges.
+    let bufferObserver: IntersectionObserver;
+    if (isMobile) {
+      const leftBuffer = container.querySelector('[data-buffer="left"]');
+      const rightBuffer = container.querySelector('[data-buffer="right"]');
+
+      if (leftBuffer && rightBuffer) {
+        bufferObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              // When a buffer element is fully visible, trigger a week change.
+              if (entry.intersectionRatio === 1) {
+                if (entry.target.getAttribute("data-buffer") === "left") {
+                  goToPreviousWeek();
+                } else if (
+                  entry.target.getAttribute("data-buffer") === "right"
+                ) {
+                  goToNextWeek();
+                }
+              }
+            });
+          },
+          {
+            root: container,
+            threshold: 1.0, // Fully visible
+          },
+        );
+        bufferObserver.observe(leftBuffer);
+        bufferObserver.observe(rightBuffer);
       }
+    }
+
+    return () => {
+      dayObserver.disconnect();
+      if (bufferObserver) bufferObserver.disconnect();
     };
-  }, [containerRef, handleScroll]);
+  }, [containerRef, weekStart.toDateString()]);
 }

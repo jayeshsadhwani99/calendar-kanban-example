@@ -1,4 +1,4 @@
-export const DAY_ABBREVS = ["M", "T", "W", "T", "F", "S", "S"];
+export const DAY_ABBREVS = ["S", "M", "T", "W", "T", "F", "S"];
 
 export const MONTHS = [
   "January",

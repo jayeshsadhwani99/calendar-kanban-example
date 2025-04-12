@@ -2,8 +2,14 @@ import { MONTHS } from "../constants";
 import { useCalendar } from "../contexts";
 
 function Header() {
-  const { activeDate, goToPreviousWeek, goToNextWeek, setActiveDate } =
-    useCalendar();
+  const {
+    selectedDayIndex,
+    weekDates,
+    goToPreviousWeek,
+    goToNextWeek,
+    setActiveDate,
+  } = useCalendar();
+  const activeDate = weekDates[selectedDayIndex];
   const month = MONTHS[activeDate.getMonth()];
   const year = activeDate.getFullYear();
 
