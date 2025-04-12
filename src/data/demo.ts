@@ -10,58 +10,92 @@ export interface EventsByDate {
   [date: string]: Event[];
 }
 
-const events: EventsByDate = {
-  "2025-04-11": [
-    {
-      id: "event-1",
-      title: "Coffee with Alex",
-      description:
-        "Meet with Alex to brainstorm ideas for the upcoming product launch. We'll review market research and competitor analysis to identify potential opportunities and challenges.",
-      imageUrl:
-        "https://fastly.picsum.photos/id/312/1920/1080.jpg?hmac=OD_fP9MUQN7uJ8NBR7tlii78qwHPUROGgohG4w16Kjw",
-      time: "09:00 AM",
-    },
-    {
-      id: "event-2",
-      title: "Team Standup",
-      description:
-        "Weekly standup meeting with the dev team. Discuss progress, blockers, and align on next week's priorities.",
-      imageUrl:
-        "http://fastly.picsum.photos/id/737/1920/1080.jpg?hmac=aFzER8Y4wcWTrXVx2wVKSj10IqnygaF33gESj0WGDwI",
-      time: "02:00 PM",
-    },
-  ],
-  "2025-04-12": [
-    {
-      id: "event-3",
-      title: "Yoga Session",
-      description:
-        "Join for a relaxing yoga session to reduce stress and improve mindfulness. Suitable for all levels, focusing on gentle stretches.",
-      imageUrl:
-        "https://fastly.picsum.photos/id/392/1920/1080.jpg?hmac=Fvbf7C1Rcozg8EccwYPqsGkk_o6Bld2GQRDPZKWpd7g",
-      time: "12:00 PM",
-    },
-    {
-      id: "event-4",
-      title: "Product Demo",
-      description:
-        "Demo of UI improvements and performance optimizations to gather stakeholder feedback.",
-      imageUrl:
-        "https://fastly.picsum.photos/id/249/1920/1080.jpg?hmac=cPMNdgGXRh6T_KhRMuaQjRtAx5cWRraELjtL2MHTfYs",
-      time: "03:30 PM",
-    },
-  ],
-  "2025-04-13": [
-    {
-      id: "event-5",
-      title: "Client Meeting",
-      description:
-        "Review project progress, timeline adjustments, and outline roadmap for next quarter with the client.",
-      imageUrl:
-        "https://fastly.picsum.photos/id/908/1920/1080.jpg?hmac=MeG_oA1s75hHAL_4JzCioh6--zyFTWSCTxOhe8ugvXo",
-      time: "11:30 AM",
-    },
-  ],
-};
+const sampleTitles = [
+  "Team Sync",
+  "Product Review",
+  "Marketing Strategy",
+  "Design Sprint",
+  "Dev Workshop",
+  "Client Call",
+  "Code Review",
+  "1:1 Meeting",
+  "Networking Brunch",
+  "Brainstorm Session",
+  "Release Planning",
+  "Customer Feedback Review",
+  "Team Lunch",
+  "UI/UX Review",
+  "Yoga Break",
+  "Sales Update",
+  "Project Kickoff",
+  "Investor Call",
+  "Onboarding Session",
+  "Performance Check-in",
+];
+
+const sampleDescriptions = [
+  "Discuss progress and blockers, align for next steps.",
+  "Deep dive into recent designs and user flows.",
+  "Share marketing metrics and upcoming campaigns.",
+  "A chance to reconnect and align on shared goals.",
+  "Walkthrough code changes and review key updates.",
+  "Connect with clients and review ongoing tasks.",
+  "Prioritize backlog and set sprint goals.",
+  "Gather team feedback and plan future improvements.",
+  "Meditation and breathing session to reset your mind.",
+  "Demo latest changes and capture stakeholder feedback.",
+];
+
+function getRandomTime(): string {
+  const hour = Math.floor(Math.random() * 9) + 8; // 8 AM to 4 PM
+  const minute = Math.random() > 0.5 ? "00" : "30";
+  const ampm = hour < 12 ? "AM" : "PM";
+  const formattedHour = hour <= 12 ? hour : hour - 12;
+  return `${formattedHour}:${minute} ${ampm}`;
+}
+
+function getRandomEvent(idIndex: number): Event {
+  const title = sampleTitles[Math.floor(Math.random() * sampleTitles.length)];
+  const description =
+    sampleDescriptions[Math.floor(Math.random() * sampleDescriptions.length)];
+  const imageId = Math.floor(Math.random() * 1000); // for unique picsum image
+  return {
+    id: `event-${idIndex}`,
+    title,
+    description,
+    imageUrl: `https://picsum.photos/id/${imageId}/1920/1080.jpg`,
+    time: getRandomTime(),
+  };
+}
+
+function formatDate(date: Date): string {
+  return date.toISOString().split("T")[0];
+}
+
+function generateEvents(): EventsByDate {
+  const eventsByDate: EventsByDate = {};
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - today.getDay() - 7); // start of previous week (Sunday)
+  let eventId = 1;
+
+  for (let i = 0; i < 21; i++) {
+    const currentDate = new Date(startDate);
+    currentDate.setDate(startDate.getDate() + i);
+    const formattedDate = formatDate(currentDate);
+    const numEvents = Math.floor(Math.random() * 5) + 2; // 2 to 6 events per day
+
+    const dailyEvents: Event[] = [];
+    for (let j = 0; j < numEvents; j++) {
+      dailyEvents.push(getRandomEvent(eventId++));
+    }
+
+    eventsByDate[formattedDate] = dailyEvents;
+  }
+
+  return eventsByDate;
+}
+
+const events: EventsByDate = generateEvents();
 
 export default events;

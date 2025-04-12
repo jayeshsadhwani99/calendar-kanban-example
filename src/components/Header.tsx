@@ -14,7 +14,7 @@ function Header() {
   const year = activeDate.getFullYear();
 
   return (
-    <div className="sticky top-0 bg-white border-b z-10 px-4 py-3 flex items-center gap-2">
+    <div className="bg-white border-b z-10 px-4 py-3 flex items-center gap-2">
       <button
         className="flex items-center justify-center text-sm md:text-base font-semibold py-1 px-2 md:py-2 md:px-4 hover:bg-gray-100 rounded-full transition-colors cursor-pointer border"
         onClick={() => setActiveDate(new Date())}

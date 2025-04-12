@@ -12,7 +12,7 @@ function Event({ id, title, description, imageUrl, time }: EventType) {
         <img
           src={imageUrl}
           alt={title}
-          className="rounded w-full h-32 object-cover duration-300 group-hover:scale-105"
+          className="rounded w-full h-32 object-cover group-hover:scale-105 transition-transform"
         />
       </motion.div>
       <motion.div
