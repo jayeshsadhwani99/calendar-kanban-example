@@ -7,15 +7,16 @@ import { useParams } from "react-router-dom";
 import EventDetails from "../components/EventDetails";
 import { AnimatePresence } from "motion/react";
 import WeekChangeScrollAnimation from "../components/Animations/WeekChangeScrollAnimation";
+import { useActiveDateOnScroll } from "../hooks";
 
 function Home() {
   const { id } = useParams();
   const { weekDates } = useCalendar();
   const mainRef = useRef<HTMLDivElement>(null);
 
-  // useActiveDateOnScroll({
-  //   containerRef: mainRef,
-  // });
+  useActiveDateOnScroll({
+    containerRef: mainRef,
+  });
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
@@ -27,7 +28,7 @@ function Home() {
           <div ref={mainRef} className="flex h-full md:grid md:grid-cols-7">
             <div
               data-buffer="left"
-              className="w-10 flex-shrink-0 md:hidden"
+              className="w-10 flex shrink-0 md:hidden"
               aria-hidden="true"
             />
             {weekDates.map((date, index) => (
@@ -35,7 +36,7 @@ function Home() {
             ))}
             <div
               data-buffer="right"
-              className="w-0 flex-shrink-0 md:hidden"
+              className="w-0 flex shrink-0 md:hidden"
               aria-hidden="true"
             />
           </div>

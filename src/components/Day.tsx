@@ -39,7 +39,7 @@ function Day({ date }: DayProps) {
       )}
       <div className="flex flex-col gap-4 py-2">
         {eventsList.map((event) => (
-          <Event {...event} />
+          <Event {...event} key={event.id} />
         ))}
       </div>
     </div>

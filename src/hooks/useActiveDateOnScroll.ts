@@ -12,7 +12,40 @@ export function useActiveDateOnScroll({
   const { setActiveDate, goToPreviousWeek, goToNextWeek, weekStart } =
     useCalendar();
 
-  useEffect(() => {
+  const setupBufferObserver = () => {
+    const container = containerRef.current;
+    if (!container || !isMobile) return;
+
+    const leftBuffer = container.querySelector('div[data-buffer="left"]');
+    const rightBuffer = container.querySelector('div[data-buffer="right"]');
+
+    if (!leftBuffer || !rightBuffer) return;
+
+    const bufferObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          // When a buffer element is fully visible, trigger a week change.
+          if (entry.intersectionRatio === 1) {
+            if (entry.target.getAttribute("data-buffer") === "left") {
+              goToPreviousWeek();
+            } else if (entry.target.getAttribute("data-buffer") === "right") {
+              goToNextWeek();
+            }
+          }
+        });
+      },
+      {
+        root: container,
+        threshold: 1.0, // Fully visible
+      },
+    );
+    bufferObserver.observe(leftBuffer);
+    bufferObserver.observe(rightBuffer);
+
+    return bufferObserver;
+  };
+
+  const setupDayObserver = () => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -38,41 +71,16 @@ export function useActiveDateOnScroll({
 
     dayElements.forEach((el) => dayObserver.observe(el));
 
-    // If running on mobile, set up buffer observers for week edges.
-    let bufferObserver: IntersectionObserver;
-    if (isMobile) {
-      const leftBuffer = container.querySelector('[data-buffer="left"]');
-      const rightBuffer = container.querySelector('[data-buffer="right"]');
+    return dayObserver;
+  };
 
-      if (leftBuffer && rightBuffer) {
-        bufferObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              // When a buffer element is fully visible, trigger a week change.
-              if (entry.intersectionRatio === 1) {
-                if (entry.target.getAttribute("data-buffer") === "left") {
-                  goToPreviousWeek();
-                } else if (
-                  entry.target.getAttribute("data-buffer") === "right"
-                ) {
-                  goToNextWeek();
-                }
-              }
-            });
-          },
-          {
-            root: container,
-            threshold: 1.0, // Fully visible
-          },
-        );
-        bufferObserver.observe(leftBuffer);
-        bufferObserver.observe(rightBuffer);
-      }
-    }
+  // useEffect(() => {
+  //   const bufferObserver = setupBufferObserver();
+  //   // const dayObserver = setupDayObserver();
 
-    return () => {
-      dayObserver.disconnect();
-      if (bufferObserver) bufferObserver.disconnect();
-    };
-  }, [containerRef, weekStart.toDateString()]);
+  //   return () => {
+  //     // if (dayObserver) dayObserver.disconnect();
+  //     if (bufferObserver) bufferObserver.disconnect();
+  //   };
+  // }, [containerRef, weekStart.toDateString()]);
 }
