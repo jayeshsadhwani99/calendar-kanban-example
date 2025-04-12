@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from "motion/react";
 import { useCalendar } from "../../contexts";
-import { weekDirectionVariants } from "../../utils";
+import { getWeekDirectionVariants } from "../../utils";
 import { PropsWithChildren } from "react";
 
 function WeekChangeScrollAnimation({ children }: PropsWithChildren<any>) {
@@ -10,8 +10,7 @@ function WeekChangeScrollAnimation({ children }: PropsWithChildren<any>) {
     <AnimatePresence mode="wait" custom={weekDirection}>
       <motion.div
         key={weekStart.toISOString()}
-        custom={weekDirection}
-        variants={weekDirectionVariants}
+        variants={getWeekDirectionVariants(weekDirection)}
         initial="initial"
         animate="animate"
         exit="exit"

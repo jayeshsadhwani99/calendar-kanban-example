@@ -38,7 +38,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     setWeekDirection(-1);
     setWeekStart((prev) => addDays(prev, -7));
     handleDayClick(6);
-    setWeekDirection(0);
   }, []);
 
   // Navigate to the next week and update week direction
@@ -46,7 +45,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
     setWeekDirection(1);
     setWeekStart((prev) => addDays(prev, 7));
     handleDayClick(0);
-    setWeekDirection(0);
   }, []);
 
   const setActiveDate = useCallback((date: Date) => {
