@@ -3,8 +3,6 @@ import {
   clearHighlights,
   formatDate,
   getEventsForDate,
-  getIndicators,
-  getNearestIndicator,
   highlightIndicator,
 } from "../../../utils";
 
@@ -27,18 +25,9 @@ export const useDragEventsForDay = (date: Date) => {
     clearHighlights(date);
   };
 
-  const handleDragEnd = (e: any) => {
+  const handleDragEnd = () => {
     clearHighlights(date);
-
     const { eventId, date: fromDate } = currentDraggedEventData;
-
-    const indicators = getIndicators(date);
-    const { element } = getNearestIndicator(e, indicators);
-
-    const before = (element as HTMLElement).dataset.before || "-1";
-
-    if (before === eventId) return;
-
     moveEvent(eventId, formatDate(fromDate), formatDate(date));
   };
 
