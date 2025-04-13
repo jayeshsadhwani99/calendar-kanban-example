@@ -1,5 +1,6 @@
 import { useCalendar } from "../contexts";
 import { AnimationControls } from "motion/react";
+import { formatDate } from "../utils";
 
 interface UseActiveDateOnScrollProps {
   containerRef: React.RefObject<HTMLElement | null>;
@@ -20,7 +21,7 @@ export function useActiveDateOnScroll({
 
   const handleDragEnd = async (_: any, info: any) => {
     if (!containerRef.current) return;
-    const activeDay = weekDates[selectedDayIndex].toDateString();
+    const activeDay = formatDate(weekDates[selectedDayIndex]);
     // Determine day width by getting the first day element
     const dayElem = containerRef.current.querySelector(
       `[id="day-${activeDay}"]`,

@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import { useCalendar } from "../contexts";
-import Event from "./Event";
-import { getEventsForDate } from "../utils";
+import { useCalendar } from "../../contexts";
+import Event from "../Event";
+import { formatDate } from "../../utils";
+import { useDragEventsForDay } from "./hooks";
 
 type DayProps = {
   date: Date;
@@ -10,11 +11,16 @@ type DayProps = {
 
 function Day({ date }: DayProps) {
   const { selectedDayIndex } = useCalendar();
-
-  const eventsList = getEventsForDate(date);
+  const {
+    eventsList,
+    handleDragEnd,
+    handleDragLeave,
+    handleDragOver,
+    handleDragStart,
+  } = useDragEventsForDay(date);
 
   useEffect(() => {
-    const element = document.getElementById(`day-${date.toDateString()}`);
+    const element = document.getElementById(`day-${formatDate(date)}`);
     if (element && date.getDay() === selectedDayIndex) {
       element.scrollIntoView({
         behavior: "smooth",
@@ -26,8 +32,11 @@ function Day({ date }: DayProps) {
 
   return (
     <div
-      key={date.toDateString()}
-      id={`day-${date.toDateString()}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDragEnd}
+      key={formatDate(date)}
+      id={`day-${formatDate(date)}`}
       className={`relative ${
         eventsList?.length === 0 ? "h-full" : "h-fit md:h-full"
       } flex items-center justify-center snap-start snap-always flex-shrink-0 md:flex-grow w-full md:w-auto border-r last:border-r-0 bg-white p-2`}>
@@ -39,7 +48,12 @@ function Day({ date }: DayProps) {
       )}
       <div className="flex flex-col gap-4 py-2">
         {eventsList.map((event) => (
-          <Event {...event} key={event.id} />
+          <Event
+            {...event}
+            key={event.id}
+            date={date}
+            handleDragStart={handleDragStart}
+          />
         ))}
       </div>
     </div>

@@ -1,5 +1,6 @@
 import { DAY_ABBREVS } from "../constants";
 import { useCalendar } from "../contexts";
+import { formatDate } from "../utils";
 import WeekChangeScrollAnimation from "./Animations/WeekChangeScrollAnimation";
 
 function CalendarDates() {
@@ -13,7 +14,7 @@ function CalendarDates() {
             const isActive = date.getDay() === selectedDayIndex;
             return (
               <div
-                key={date.toDateString()}
+                key={formatDate(date)}
                 className="flex-1 flex flex-col items-center gap-1 cursor-pointer"
                 onClick={() => handleDayClick(index)}>
                 <span className="text-xs uppercase text-gray-500">
