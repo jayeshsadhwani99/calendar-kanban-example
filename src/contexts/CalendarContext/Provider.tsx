@@ -22,15 +22,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
   // Update selected day when a day is clicked
   const handleDayClick = useCallback((index: number) => {
     setSelectedDayIndex(index);
-    const date = weekDates[index];
-    const element = document.getElementById(`day-${date.toDateString()}`);
-    if (element && date.getDay() === selectedDayIndex) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
-    }
   }, []);
 
   // Navigate to the previous week and update week direction

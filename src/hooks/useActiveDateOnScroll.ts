@@ -1,86 +1,71 @@
-import { useEffect } from "react";
 import { useCalendar } from "../contexts";
-import { isMobile } from "../utils";
+import { AnimationControls } from "motion/react";
 
 interface UseActiveDateOnScrollProps {
   containerRef: React.RefObject<HTMLElement | null>;
+  controls: AnimationControls;
 }
 
 export function useActiveDateOnScroll({
   containerRef,
+  controls,
 }: UseActiveDateOnScrollProps) {
-  const { setActiveDate, goToPreviousWeek, goToNextWeek, weekStart } =
-    useCalendar();
+  const {
+    weekDates,
+    selectedDayIndex,
+    handleDayClick,
+    goToNextWeek,
+    goToPreviousWeek,
+  } = useCalendar();
 
-  const setupBufferObserver = () => {
-    const container = containerRef.current;
-    if (!container || !isMobile) return;
-
-    const leftBuffer = container.querySelector('div[data-buffer="left"]');
-    const rightBuffer = container.querySelector('div[data-buffer="right"]');
-
-    if (!leftBuffer || !rightBuffer) return;
-
-    const bufferObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // When a buffer element is fully visible, trigger a week change.
-          if (entry.intersectionRatio === 1) {
-            if (entry.target.getAttribute("data-buffer") === "left") {
-              goToPreviousWeek();
-            } else if (entry.target.getAttribute("data-buffer") === "right") {
-              goToNextWeek();
-            }
-          }
-        });
-      },
-      {
-        root: container,
-        threshold: 1.0, // Fully visible
-      },
+  const handleDragEnd = async (_: any, info: any) => {
+    if (!containerRef.current) return;
+    const activeDay = weekDates[selectedDayIndex].toDateString();
+    // Determine day width by getting the first day element
+    const dayElem = containerRef.current.querySelector(
+      `[id="day-${activeDay}"]`,
     );
-    bufferObserver.observe(leftBuffer);
-    bufferObserver.observe(rightBuffer);
+    if (!dayElem) return;
+    const dayWidth = dayElem.getBoundingClientRect().width;
+    const threshold = dayWidth / 2;
+    // info.offset.x is the total drag offset from the starting position.
+    const xOffset = info.offset.x;
 
-    return bufferObserver;
+    // Calculate a target day index. Negative offsets (left drag) push the container left.
+    let targetIndex = xOffset > 0 ? selectedDayIndex - 1 : selectedDayIndex + 1;
+    targetIndex = Math.min(Math.max(targetIndex, 0), weekDates.length - 1);
+
+    // If dragging from the left edge far enough (i.e. active index 0 and dragged right), go to previous week.
+    if (targetIndex === 0 && xOffset > threshold && selectedDayIndex === 0) {
+      goToPreviousWeek();
+      // Snap to the last day (index = weekDates.length - 1) of the new week.
+      await controls.start({
+        x: -((weekDates.length - 1) * dayWidth),
+        transition: { type: "spring", stiffness: 300, damping: 30 },
+      });
+      return;
+    }
+    // If dragging from the right edge far enough (i.e. active index at last day and dragged left), go to next week.
+    if (
+      targetIndex === weekDates.length - 1 &&
+      xOffset < -threshold &&
+      selectedDayIndex === weekDates.length - 1
+    ) {
+      goToNextWeek();
+      await controls.start({
+        x: 0,
+        transition: { type: "spring", stiffness: 300, damping: 30 },
+      });
+      return;
+    }
+    // Otherwise, snap to the nearest day.
+    const targetX = -targetIndex * dayWidth;
+    await controls.start({
+      x: targetX,
+      transition: { type: "spring", stiffness: 300, damping: 30 },
+    });
+    handleDayClick(targetIndex);
   };
 
-  const setupDayObserver = () => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    // Observe day elements (they have IDs that start with "day-").
-    const dayElements = container.querySelectorAll('[id^="day-"]');
-
-    const dayObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // When a day is mostly visible, make it the active date.
-          if (entry.intersectionRatio >= 0.8) {
-            const dateString = entry.target.id.replace("day-", "").trim();
-            const newActiveDate = new Date(dateString);
-            setActiveDate(newActiveDate);
-          }
-        });
-      },
-      {
-        root: container,
-        threshold: 0.8,
-      },
-    );
-
-    dayElements.forEach((el) => dayObserver.observe(el));
-
-    return dayObserver;
-  };
-
-  // useEffect(() => {
-  //   const bufferObserver = setupBufferObserver();
-  //   // const dayObserver = setupDayObserver();
-
-  //   return () => {
-  //     // if (dayObserver) dayObserver.disconnect();
-  //     if (bufferObserver) bufferObserver.disconnect();
-  //   };
-  // }, [containerRef, weekStart.toDateString()]);
+  return { handleDragEnd };
 }

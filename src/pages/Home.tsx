@@ -5,44 +5,49 @@ import { useRef } from "react";
 import Day from "../components/Day";
 import { useParams } from "react-router-dom";
 import EventDetails from "../components/EventDetails";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, motion, useAnimation } from "motion/react";
 import WeekChangeScrollAnimation from "../components/Animations/WeekChangeScrollAnimation";
+import { isMobile } from "../utils";
 import { useActiveDateOnScroll } from "../hooks";
 
 function Home() {
   const { id } = useParams();
   const { weekDates } = useCalendar();
-  const mainRef = useRef<HTMLDivElement>(null);
 
-  useActiveDateOnScroll({
+  const mainRef = useRef<HTMLDivElement>(null);
+  const controls = useAnimation();
+  const { handleDragEnd } = useActiveDateOnScroll({
     containerRef: mainRef,
+    controls,
   });
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
       <Header />
-
       <CalendarDates />
-      <div className="flex-1 overflow-auto relative scroll-smooth snap-x snap-mandatory">
-        <WeekChangeScrollAnimation>
-          <div ref={mainRef} className="flex h-full md:grid md:grid-cols-7">
-            <div
-              data-buffer="left"
-              className="w-10 flex shrink-0 md:hidden"
-              aria-hidden="true"
-            />
+      <div className="flex-1 overflow-auto overflow-x-hidden">
+        {isMobile ? (
+          <motion.div
+            ref={mainRef}
+            className="flex h-full md:hidden"
+            drag="x"
+            animate={controls}
+            onDragEnd={handleDragEnd}>
             {weekDates.map((date, index) => (
               <Day date={date} key={index} index={index} />
             ))}
-            <div
-              data-buffer="right"
-              className="w-0 flex shrink-0 md:hidden"
-              aria-hidden="true"
-            />
-          </div>
-        </WeekChangeScrollAnimation>
+          </motion.div>
+        ) : (
+          <WeekChangeScrollAnimation>
+            <div ref={mainRef} className="h-full hidden md:grid md:grid-cols-7">
+              {/** Desktop layout remains unchanged */}
+              {weekDates.map((date, index) => (
+                <Day date={date} key={index} index={index} />
+              ))}
+            </div>
+          </WeekChangeScrollAnimation>
+        )}
       </div>
-
       <AnimatePresence>{id && <EventDetails id={id} />}</AnimatePresence>
     </div>
   );
