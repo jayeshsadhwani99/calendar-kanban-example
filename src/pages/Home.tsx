@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import CalendarDates from "../components/CalendarDates";
 import { useCalendar } from "../contexts";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import Day from "../components/Day";
 import { useParams } from "react-router-dom";
 import EventDetails from "../components/EventDetails";
@@ -12,7 +12,7 @@ import { useActiveDateOnScroll } from "../hooks";
 
 function Home() {
   const { id } = useParams();
-  const { weekDates } = useCalendar();
+  const { weekDates, selectedDayIndex } = useCalendar();
 
   const mainRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
@@ -20,6 +20,21 @@ function Home() {
     containerRef: mainRef,
     controls,
   });
+
+  // When the active day changes, animate the container to that day's position.
+  useEffect(() => {
+    if (isMobile && mainRef.current) {
+      // Assume all day elements are the same width. Get the width from the first day element.
+      const dayElem = mainRef.current.querySelector('[id^="day-"]');
+      if (dayElem) {
+        const dayWidth = dayElem.getBoundingClientRect().width;
+        controls.start({
+          x: -selectedDayIndex * dayWidth,
+          transition: { type: "spring", stiffness: 300, damping: 30 },
+        });
+      }
+    }
+  }, [selectedDayIndex, controls]);
 
   return (
     <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
