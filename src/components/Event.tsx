@@ -53,6 +53,7 @@ function Event(props: EventType & { date: Date; handleDragStart: any }) {
         id={id}
         draggable={!isMobile}
         drag={isMobile}
+        dragSnapToOrigin
         dragConstraints={{}}
         onDragStart={(e) => handleDragStart(e, id, date)}
         onDrag={handleDrag}
