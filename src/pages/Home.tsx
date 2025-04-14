@@ -9,10 +9,14 @@ import { AnimatePresence, motion, useAnimation } from "motion/react";
 import WeekChangeScrollAnimation from "../components/Animations/WeekChangeScrollAnimation";
 import { isMobile } from "../utils";
 import { useActiveDateOnScroll } from "../hooks";
+import { useEventContext } from "../contexts/EventContext";
+import MobileDraggedEvent from "../components/MobileDraggedEvent";
 
 function Home() {
   const { id } = useParams();
   const { weekDates, selectedDayIndex } = useCalendar();
+  const { currentDraggedEventData, setCurrentDraggedEventData } =
+    useEventContext();
 
   const mainRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
@@ -36,8 +40,14 @@ function Home() {
     }
   }, [selectedDayIndex, controls]);
 
+  const handleDeselectItem = () => {
+    setCurrentDraggedEventData(undefined);
+  };
+
   return (
-    <div className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
+    <div
+      onClick={handleDeselectItem}
+      className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
       <Header />
       <CalendarDates />
       <div className="flex-1 overflow-auto overflow-x-hidden">
@@ -45,7 +55,7 @@ function Home() {
           <motion.div
             ref={mainRef}
             className="flex h-full md:hidden"
-            drag="x"
+            drag={currentDraggedEventData?.id ? undefined : "x"}
             animate={controls}
             onDragEnd={handleDragEnd}>
             {weekDates.map((date, index) => (
@@ -64,6 +74,9 @@ function Home() {
         )}
       </div>
       <AnimatePresence>{id && <EventDetails id={id} />}</AnimatePresence>
+      {currentDraggedEventData?.id && (
+        <MobileDraggedEvent {...currentDraggedEventData} />
+      )}
     </div>
   );
 }
