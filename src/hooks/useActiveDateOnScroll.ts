@@ -37,34 +37,23 @@ export function useActiveDateOnScroll({
     targetIndex = Math.min(Math.max(targetIndex, 0), weekDates.length - 1);
 
     // If dragging from the left edge far enough (i.e. active index 0 and dragged right), go to previous week.
-    if (targetIndex === 0 && xOffset > threshold && selectedDayIndex === 0) {
+    if (targetIndex === 0 && xOffset > threshold) {
       goToPreviousWeek();
-      // Snap to the last day (index = weekDates.length - 1) of the new week.
-      await controls.start({
-        x: -((weekDates.length - 1) * dayWidth),
-        transition: { type: "spring", stiffness: 300, damping: 30 },
-      });
       return;
     }
     // If dragging from the right edge far enough (i.e. active index at last day and dragged left), go to next week.
-    if (
-      targetIndex === weekDates.length - 1 &&
-      xOffset < -threshold &&
-      selectedDayIndex === weekDates.length - 1
-    ) {
+    if (targetIndex === weekDates.length - 1 && xOffset < -threshold) {
       goToNextWeek();
-      await controls.start({
-        x: 0,
-        transition: { type: "spring", stiffness: 300, damping: 30 },
-      });
       return;
     }
+    if (selectedDayIndex === targetIndex) {
+      const targetX = -targetIndex * dayWidth;
+      await controls.start({
+        x: targetX,
+        transition: { type: "spring", stiffness: 300, damping: 30 },
+      });
+    }
     // Otherwise, snap to the nearest day.
-    const targetX = -targetIndex * dayWidth;
-    await controls.start({
-      x: targetX,
-      transition: { type: "spring", stiffness: 300, damping: 30 },
-    });
     handleDayClick(targetIndex);
   };
 

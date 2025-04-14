@@ -6,3 +6,4 @@ export * from "./isMobile";
 export * from "./animations";
 export * from "./formatDate";
 export * from "./indicators";
+export * from "./date";

@@ -25,7 +25,7 @@ function Home() {
   useEffect(() => {
     if (isMobile && mainRef.current) {
       // Assume all day elements are the same width. Get the width from the first day element.
-      const dayElem = mainRef.current.querySelector('[id^="day-"]');
+      const dayElem = mainRef.current.querySelector(`[id^="day-"]`);
       if (dayElem) {
         const dayWidth = dayElem.getBoundingClientRect().width;
         controls.start({

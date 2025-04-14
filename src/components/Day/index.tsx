@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-import { useCalendar } from "../../contexts";
 import Event from "../Event";
 import { formatDate } from "../../utils";
 import { useDragEventsForDay } from "./hooks";
@@ -10,7 +8,6 @@ type DayProps = {
 };
 
 function Day({ date }: DayProps) {
-  const { selectedDayIndex } = useCalendar();
   const {
     eventsList,
     handleDragEnd,
@@ -18,17 +15,6 @@ function Day({ date }: DayProps) {
     handleDragOver,
     handleDragStart,
   } = useDragEventsForDay(date);
-
-  useEffect(() => {
-    const element = document.getElementById(`day-${formatDate(date)}`);
-    if (element && date.getDay() === selectedDayIndex) {
-      element.scrollIntoView({
-        behavior: "smooth",
-        block: "nearest",
-        inline: "center",
-      });
-    }
-  }, [selectedDayIndex]);
 
   return (
     <div

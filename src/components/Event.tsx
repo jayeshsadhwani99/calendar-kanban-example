@@ -1,22 +1,64 @@
+import { useRef } from "react";
 import { Event as EventType } from "../data/demo";
 import { Link } from "react-router-dom";
 import { motion } from "motion/react";
 import DropIndicator from "./DropIndicator";
-import { formatDate } from "../utils";
+import { formatDate, getTomorrow, getYesterday, isMobile } from "../utils";
+import { useCalendar } from "../contexts";
+
+const OFFSET_THRESHOLD = 50;
+const DRAG_DELAY = 1500;
 
 function Event(props: EventType & { date: Date; handleDragStart: any }) {
   const { id, title, description, imageUrl, time, date, handleDragStart } =
     props;
+  const { setActiveDate, selectedDayIndex, weekDates } = useCalendar();
+
+  const eventRef = useRef<HTMLDivElement | null>(null);
+  const dragTimerRef = useRef<number | null>(null);
+
+  const handleDrag = (_: any, info: any) => {
+    if (!eventRef.current) return;
+    const offset = window.innerWidth - info.point.x;
+    const date = weekDates[selectedDayIndex];
+
+    if (info.point.x < OFFSET_THRESHOLD) {
+      setTimeout(() => {
+        setActiveDate(getYesterday(date));
+        if (dragTimerRef.current) clearTimeout(dragTimerRef.current);
+        dragTimerRef.current = null;
+      }, DRAG_DELAY);
+    }
+
+    if (offset < OFFSET_THRESHOLD) {
+      setTimeout(() => {
+        setActiveDate(getTomorrow(date));
+        if (dragTimerRef.current) clearTimeout(dragTimerRef.current);
+        dragTimerRef.current = null;
+      }, DRAG_DELAY);
+    }
+  };
+
+  const handleDragEnd = () => {
+    if (!dragTimerRef.current) return;
+    clearTimeout(dragTimerRef.current);
+    dragTimerRef.current = null;
+  };
 
   return (
     <Link to={`/${id}`}>
       <DropIndicator day={formatDate(date)} />
       <motion.div
+        ref={eventRef}
         id={id}
-        draggable={true}
+        draggable={!isMobile}
+        drag={isMobile}
+        dragConstraints={{}}
         onDragStart={(e) => handleDragStart(e, id, date)}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
         layoutId={`event-container-${id}`}
-        className="group relative flex flex-col shadow-sm rounded-xl overflow-hidden cursor-pointer active:cursor-grabbing">
+        className={`relative group flex flex-col shadow-sm rounded-xl overflow-hidden cursor-pointer active:cursor-grabbing z-[100]`}>
         <motion.div layout layoutId={`event-image-container-${id}`}>
           <img
             src={imageUrl}

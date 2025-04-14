@@ -26,9 +26,9 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
 
   // Navigate to the previous week and update week direction
   const goToPreviousWeek = useCallback(() => {
+    handleDayClick(6);
     setWeekDirection(-1);
     setWeekStart((prev) => addDays(prev, -7));
-    handleDayClick(6);
   }, []);
 
   // Navigate to the next week and update week direction
@@ -53,7 +53,6 @@ export const CalendarProvider: React.FC<CalendarProviderProps> = ({
         selectedDayIndex,
         weekDirection,
         weekDates,
-        // activeDate,
         handleDayClick,
         setActiveDate,
         goToPreviousWeek,
