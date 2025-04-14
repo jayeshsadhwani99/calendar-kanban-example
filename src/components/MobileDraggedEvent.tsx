@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, PanInfo } from "motion/react";
 import { useEventContext } from "../contexts/EventContext";
-import { formatDate } from "../utils";
+import { formatDate, getTomorrow, getYesterday } from "../utils";
+import { useCalendar } from "../contexts";
 
 type MobileDraggedEventProps = {
   id: string;
@@ -10,9 +11,12 @@ type MobileDraggedEventProps = {
 };
 
 function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
-  const { eventsByDate } = useEventContext();
+  const { eventsByDate, moveEvent, setCurrentDraggedEventData } =
+    useEventContext();
   const event = eventsByDate?.[formatDate(date)]?.find((e) => e.id === id);
   const draggedEventRef = useRef<HTMLDivElement>(null);
+  const { setActiveDate, weekDates, selectedDayIndex } = useCalendar();
+  const timeoutRef = useRef<number>(undefined);
 
   const setDimensions = () => {
     if (!draggedEventRef.current) return;
@@ -24,6 +28,31 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
       draggedEventRef.current!.style.left = `${x}px`;
       draggedEventRef.current!.style.top = `${y}px`;
     }
+  };
+
+  const handleDrag = (_: any, info: PanInfo) => {
+    if (info.point.x < 50) {
+      timeoutRef.current = setTimeout(() => {
+        const activeDate = weekDates[selectedDayIndex];
+        setActiveDate(getYesterday(activeDate));
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      }, 1000);
+    } else if (info.point.x > window.innerWidth - 50) {
+      timeoutRef.current = setTimeout(() => {
+        const activeDate = weekDates[selectedDayIndex];
+        setActiveDate(getTomorrow(activeDate));
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      }, 1000);
+    } else {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    }
+  };
+
+  const handleDragEnd = () => {
+    const activeDate = weekDates[selectedDayIndex];
+    if (eventsByDate[formatDate(activeDate)]?.find((e) => e.id === id)) return;
+    moveEvent(id, formatDate(date), formatDate(activeDate));
+    setCurrentDraggedEventData(undefined);
   };
 
   useEffect(() => {
@@ -55,6 +84,8 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
         dragSnapToOrigin={true}
         dragConstraints={{}}
         ref={draggedEventRef}
+        onDrag={handleDrag}
+        onDragEnd={handleDragEnd}
         style={portalStyles}>
         <div className="shadow-sm rounded-xl overflow-hidden bg-white">
           <div>

@@ -35,9 +35,12 @@ export const EventProvider: React.FC<EventProviderProps> = ({
       const eventToMove = prev[fromDate]?.find((ev) => ev.id === eventId);
       if (!eventToMove) return prev;
       const newFromEvents = prev[fromDate].filter((ev) => ev.id !== eventId);
-      const newToEvents = prev[toDate]
-        ? [...prev[toDate], eventToMove]
-        : [eventToMove];
+      let newToEvents = prev[toDate] || [];
+      if (!prev[toDate]?.find((ev) => ev.id === eventId)) {
+        newToEvents = prev[toDate]
+          ? [eventToMove, ...prev[toDate]]
+          : [eventToMove];
+      }
       return {
         ...prev,
         [fromDate]: newFromEvents,
