@@ -19,6 +19,7 @@ export const useHandleDrag = () => {
     const touch = e.touches[0];
     const { clientX: x, clientY: y } = touch;
     setDragCoordinates({ x, y });
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
     if (x < THRESHOLD_FOR_WEEK_CHANGE) {
       timeoutRef.current = setTimeout(() => {
@@ -26,14 +27,13 @@ export const useHandleDrag = () => {
         setActiveDate(getYesterday(activeDate));
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
       }, DAY_CHANGE_TIMEOUT);
-    } else if (x > window.innerWidth - THRESHOLD_FOR_WEEK_CHANGE) {
+    }
+    if (x > window.innerWidth - THRESHOLD_FOR_WEEK_CHANGE) {
       timeoutRef.current = setTimeout(() => {
         const activeDate = weekDates[selectedDayIndex];
         setActiveDate(getTomorrow(activeDate));
         if (timeoutRef.current) clearTimeout(timeoutRef.current);
       }, DAY_CHANGE_TIMEOUT);
-    } else {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     }
   };
 

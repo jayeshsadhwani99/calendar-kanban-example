@@ -58,6 +58,7 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0.5, scale: 0.8, z: 10 }}
+        onContextMenu={(e) => e.preventDefault()}
         animate={{
           opacity: 1,
           scale: 1,
