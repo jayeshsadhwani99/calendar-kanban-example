@@ -15,6 +15,7 @@ function Event(props: any & { date: Date }) {
     handleTouchStart,
     handleTouchEnd,
     handleDragStart,
+    eventRef,
   } = useDragEventsForEvent({ id, date });
 
   const navigateToEvent = () => {
@@ -25,6 +26,7 @@ function Event(props: any & { date: Date }) {
     <>
       <DropIndicator day={formatDate(date)} />
       <motion.div
+        ref={eventRef}
         id={`event-${id}`}
         onClick={navigateToEvent}
         onContextMenu={(e) => e.preventDefault()}

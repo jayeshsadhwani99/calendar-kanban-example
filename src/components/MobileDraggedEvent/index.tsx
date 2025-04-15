@@ -8,9 +8,11 @@ import { getAnimationVariants } from "./utils";
 type MobileDraggedEventProps = {
   id: string;
   date: Date;
+  x: number;
+  y: number;
 };
 
-function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
+function MobileDraggedEvent({ id, date, x, y }: MobileDraggedEventProps) {
   const { eventsByDate, dragCoordinates } = useEventContext();
   const event = eventsByDate?.[formatDate(date)]?.find((e) => e.id === id);
   const draggedEventRef = useRef<HTMLDivElement>(null);
@@ -51,8 +53,8 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
 
   const portalStyles: React.CSSProperties = {
     position: "fixed",
-    left: dragCoordinates?.x || 0,
-    top: dragCoordinates?.y || 0,
+    left: dragCoordinates?.x || x,
+    top: dragCoordinates?.y || y,
     translate: dragCoordinates?.x && dragCoordinates.y ? "-50% -50%" : "",
     zIndex: 20,
   };
@@ -77,7 +79,7 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
           <img
             src={event.imageUrl}
             alt={event.title}
-            className="rounded w-full h-32 object-cover"
+            className="rounded w-full h-32 object-cover select-none"
           />
         </div>
         <div className="p-2 text-left">

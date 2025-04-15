@@ -28,7 +28,11 @@ function EventDetails({ id }: EventDetailsProps) {
           layoutId={`event-container-${id}`}
           transition={{ duration: 0.2, delay: 0.1 }}>
           <motion.div layout layoutId={`event-image-container-${id}`}>
-            <img className="h-64 w-full" src={event.imageUrl} alt="" />
+            <img
+              className="h-64 w-full select-none"
+              src={event.imageUrl}
+              alt=""
+            />
             <Link to="/" className="absolute top-0 right-0 p-4 text-white">
               X
             </Link>

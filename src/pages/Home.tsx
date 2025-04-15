@@ -52,7 +52,7 @@ function Home() {
       onTouchCancel={handleTouchCancel}
       onTouchEnd={handleTouchEnd}
       onClick={handleDeselectItem}
-      className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
+      className="flex flex-col h-dvh w-screen overflow-hidden bg-gray-50">
       <div className="sticky top-0">
         <Header />
         <CalendarDates />

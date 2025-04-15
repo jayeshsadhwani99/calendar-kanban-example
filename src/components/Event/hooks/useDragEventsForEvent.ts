@@ -9,6 +9,7 @@ export const useDragEventsForEvent = ({
   id: string;
   date: Date;
 }) => {
+  const eventRef = useRef<HTMLDivElement>(null);
   const { setCurrentDraggedEventData } = useEventContext();
 
   const touchTimerRef = useRef<number | null>(null);
@@ -17,7 +18,13 @@ export const useDragEventsForEvent = ({
     // Clear any existing state
     setCurrentDraggedEventData(undefined);
     touchTimerRef.current = setTimeout(() => {
-      setCurrentDraggedEventData({ id, date });
+      const { x = 0, y = 0 } = eventRef.current?.getBoundingClientRect() ?? {};
+      setCurrentDraggedEventData({
+        id,
+        date,
+        x,
+        y,
+      });
     }, TOUCH_TIMEOUT_PHONE);
   };
 
@@ -37,6 +44,7 @@ export const useDragEventsForEvent = ({
   };
 
   return {
+    eventRef,
     handleTouchStart,
     handleTouchEnd,
     handleDeselectItem,
