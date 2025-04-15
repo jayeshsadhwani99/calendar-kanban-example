@@ -27,13 +27,14 @@ export const useDragEventsForDay = (date: Date) => {
 
   const handleDragEnd = () => {
     clearHighlights(date);
-    const { eventId, date: fromDate } = currentDraggedEventData;
-    moveEvent(eventId, formatDate(fromDate), formatDate(date));
+    const { id, date: fromDate } = currentDraggedEventData;
+    moveEvent(id, formatDate(fromDate), formatDate(date));
+    setCurrentDraggedEventData(undefined);
   };
 
   const handleDragStart = (_: any, id: string, date: Date) => {
     setCurrentDraggedEventData({
-      eventId: id,
+      id,
       date,
     });
   };

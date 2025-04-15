@@ -74,7 +74,7 @@ function Home() {
         )}
       </div>
       <AnimatePresence>{id && <EventDetails id={id} />}</AnimatePresence>
-      {currentDraggedEventData?.id && (
+      {currentDraggedEventData?.id && isMobile && (
         <MobileDraggedEvent {...currentDraggedEventData} />
       )}
     </div>

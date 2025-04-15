@@ -1,0 +1,1 @@
+export const TOUCH_TIMEOUT_PHONE = 1500;

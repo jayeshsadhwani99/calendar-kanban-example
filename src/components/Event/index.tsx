@@ -1,60 +1,45 @@
-import { useRef } from "react";
-import { Event as EventType } from "../data/demo";
-import { Link } from "react-router-dom";
+import { Event as EventType } from "../../data/demo";
 import { motion } from "motion/react";
-import DropIndicator from "./DropIndicator";
-import { formatDate, isMobile } from "../utils";
-import { useEventContext } from "../contexts/EventContext";
+import DropIndicator from "../DropIndicator";
+import { formatDate, isMobile } from "../../utils";
+import { useNavigate } from "react-router-dom";
+import { useDragEventsForEvent } from "./hooks";
+import { useEventContext } from "../../contexts/EventContext";
 
-function Event(props: EventType & { date: Date; handleDragStart: any }) {
+function Event(props: EventType & { date: Date }) {
   const { id, title, description, imageUrl, time, date } = props;
-  const { currentDraggedEventData, setCurrentDraggedEventData } =
-    useEventContext();
+  const navigate = useNavigate();
+  const { currentDraggedEventData } = useEventContext();
+  const {
+    handleDragStart,
+    handleDeselectItem,
+    handleTouchStart,
+    handleTouchEnd,
+  } = useDragEventsForEvent({ id, date });
 
-  const eventRef = useRef<HTMLDivElement | null>(null);
-  const touchTimerRef = useRef<number | null>(null);
-
-  const handleTouchStart = () => {
-    setCurrentDraggedEventData(undefined);
-    touchTimerRef.current = setTimeout(() => {
-      setCurrentDraggedEventData({
-        id,
-        date,
-      });
-    }, 2000);
-  };
-
-  const handleTouchEnd = () => {
-    if (touchTimerRef.current) {
-      clearTimeout(touchTimerRef.current);
-      touchTimerRef.current = null;
-    }
-  };
-
-  const handleDeselectItem = () => {
-    setCurrentDraggedEventData(undefined);
+  const navigateToEvent = () => {
+    navigate(`/${id}`);
   };
 
   return (
-    <Link
-      onClick={(e) => e.stopPropagation()}
-      to={`/${id}`}
-      className="select-none touch-none">
+    <>
       <DropIndicator day={formatDate(date)} />
       <motion.div
-        ref={eventRef}
         id={`event-${id}`}
+        onClick={navigateToEvent}
         onContextMenu={(e) => e.preventDefault()}
         onTouchStart={handleTouchStart}
         onTouchCancel={handleTouchEnd}
         onTouchEnd={handleTouchEnd}
         onBlur={handleDeselectItem}
+        onDragStart={handleDragStart}
+        onDragEnd={handleTouchEnd}
         draggable={!isMobile}
         layoutId={`event-container-${id}`}
         className={`relative group flex flex-col ${
           isMobile ? "" : "shadow-sm"
         } ${
-          currentDraggedEventData?.id === id ? "!opacity-50" : ""
+          currentDraggedEventData?.id === id && isMobile ? "!opacity-50" : ""
         } rounded-xl overflow-hidden cursor-pointer active:cursor-grabbing z-10 select-none touch-none`}>
         <motion.div layout layoutId={`event-image-container-${id}`}>
           <img
@@ -74,7 +59,7 @@ function Event(props: EventType & { date: Date; handleDragStart: any }) {
         </motion.div>
       </motion.div>
       <DropIndicator day={formatDate(date)} />
-    </Link>
+    </>
   );
 }
 

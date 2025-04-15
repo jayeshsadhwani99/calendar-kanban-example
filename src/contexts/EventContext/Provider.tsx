@@ -1,26 +1,7 @@
-import React, { ReactNode, createContext, useContext, useState } from "react";
+import { useState } from "react";
 import sampleEvents, { EventsByDate } from "../../data/demo";
-
-interface EventContextType {
-  eventsByDate: EventsByDate;
-  moveEvent: (eventId: string, fromDate: string, toDate: string) => void;
-  currentDraggedEventData: any;
-  setCurrentDraggedEventData: (data: any) => void;
-}
-
-const EventContext = createContext<EventContextType | undefined>(undefined);
-
-export const useEventContext = () => {
-  const context = useContext(EventContext);
-  if (!context) {
-    throw new Error("useEventContext must be used within an EventProvider");
-  }
-  return context;
-};
-
-export type EventProviderProps = {
-  children: ReactNode;
-};
+import { EventProviderProps } from "./types";
+import { EventContext } from "./Context";
 
 export const EventProvider: React.FC<EventProviderProps> = ({
   children,

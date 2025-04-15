@@ -8,13 +8,8 @@ type DayProps = {
 };
 
 function Day({ date }: DayProps) {
-  const {
-    eventsList,
-    handleDragEnd,
-    handleDragLeave,
-    handleDragOver,
-    handleDragStart,
-  } = useDragEventsForDay(date);
+  const { eventsList, handleDragEnd, handleDragLeave, handleDragOver } =
+    useDragEventsForDay(date);
 
   return (
     <div
@@ -32,14 +27,9 @@ function Day({ date }: DayProps) {
           {date.toDateString()}
         </p>
       )}
-      <div className="flex flex-col gap-4 py-2">
+      <div className="flex flex-col gap-2 p-2">
         {eventsList.map((event) => (
-          <Event
-            {...event}
-            key={event.id}
-            date={date}
-            handleDragStart={handleDragStart}
-          />
+          <Event {...event} key={event.id} date={date} />
         ))}
       </div>
     </div>
