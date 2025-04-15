@@ -48,7 +48,7 @@ function Event(props: any & { date: Date }) {
             src={imageUrl}
             draggable={false}
             alt={title}
-            className="rounded w-full h-32 object-cover group-hover:scale-105 transition-transform"
+            className="rounded w-full h-32 object-cover group-hover:scale-105 transition-transform select-none"
           />
         </motion.div>
         <motion.div
