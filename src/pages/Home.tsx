@@ -80,9 +80,11 @@ function Home() {
         )}
       </div>
       <AnimatePresence>{id && <EventDetails id={id} />}</AnimatePresence>
-      {currentDraggedEventData?.id && isMobile && (
-        <MobileDraggedEvent {...currentDraggedEventData} />
-      )}
+      <AnimatePresence mode="wait">
+        {currentDraggedEventData?.id && isMobile && (
+          <MobileDraggedEvent {...currentDraggedEventData} />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
