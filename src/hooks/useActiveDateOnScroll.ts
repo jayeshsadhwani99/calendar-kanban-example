@@ -21,39 +21,50 @@ export function useActiveDateOnScroll({
 
   const handleDragEnd = async (_: any, info: any) => {
     if (!containerRef.current) return;
+
+    // Get the active day element based on current selected day.
     const activeDay = formatDate(weekDates[selectedDayIndex]);
-    // Determine day width by getting the first day element
     const dayElem = containerRef.current.querySelector(
       `[id="day-${activeDay}"]`,
     );
     if (!dayElem) return;
+
     const dayWidth = dayElem.getBoundingClientRect().width;
     const threshold = dayWidth / 2;
-    // info.offset.x is the total drag offset from the starting position.
     const xOffset = info.offset.x;
 
-    // Calculate a target day index. Negative offsets (left drag) push the container left.
-    let targetIndex = xOffset > 0 ? selectedDayIndex - 1 : selectedDayIndex + 1;
-    targetIndex = Math.min(Math.max(targetIndex, 0), weekDates.length - 1);
-
-    // If dragging from the left edge far enough (i.e. active index 0 and dragged right), go to previous week.
-    if (targetIndex === 0 && xOffset > threshold) {
-      goToPreviousWeek();
-      return;
-    }
-    // If dragging from the right edge far enough (i.e. active index at last day and dragged left), go to next week.
-    if (targetIndex === weekDates.length - 1 && xOffset < -threshold) {
-      goToNextWeek();
-      return;
-    }
-    if (selectedDayIndex === targetIndex) {
-      const targetX = -targetIndex * dayWidth;
+    // If the drag offset is less than half the day width, snap back to the current day.
+    if (Math.abs(xOffset) < threshold) {
+      const targetX = -selectedDayIndex * dayWidth;
       await controls.start({
         x: targetX,
         transition: { type: "spring", stiffness: 300, damping: 30 },
       });
+      return;
     }
-    // Otherwise, snap to the nearest day.
+
+    let targetIndex = selectedDayIndex;
+
+    if (xOffset > 0) {
+      // Dragged right: move to the previous day.
+      targetIndex = selectedDayIndex - 1;
+      if (selectedDayIndex === 0) {
+        // If at the start of the week, jump to the previous week.
+        goToPreviousWeek();
+        return;
+      }
+    } else if (xOffset < 0) {
+      // Dragged left: move to the next day.
+      targetIndex = selectedDayIndex + 1;
+      if (selectedDayIndex === weekDates.length - 1) {
+        // If at the end of the week, jump to the next week.
+        goToNextWeek();
+        return;
+      }
+    }
+
+    targetIndex = Math.min(Math.max(targetIndex, 0), weekDates.length - 1);
+
     handleDayClick(targetIndex);
   };
 
