@@ -19,7 +19,7 @@ function EventDetails({ id }: EventDetailsProps) {
         exit={{ opacity: 0 }}
         transition={{ duration: 0.2, delay: 0.2 }}
         style={{ pointerEvents: "auto" }}
-        className="bg-black fixed top-0 left-0 w-screen h-screen opacity-50 z-10">
+        className="bg-black fixed top-0 left-0 w-screen h-dvh opacity-50 z-10">
         <Link to="/" className="top-0 left-0 right-0 bottom-0 absolute" />
       </motion.div>
       <div>
