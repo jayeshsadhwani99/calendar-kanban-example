@@ -27,7 +27,7 @@ function Day({ date }: DayProps) {
           {date.toDateString()}
         </p>
       )}
-      <div className="flex flex-col gap-2 p-2">
+      <div className="relative flex flex-col gap-2 p-2 overflow-x-hidden">
         {eventsList.map((event) => (
           <Event {...event} key={event.id} date={date} />
         ))}

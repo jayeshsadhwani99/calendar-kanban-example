@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+* {
+  border-color: oklch(92.9% 0.013 255.508) !important;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;

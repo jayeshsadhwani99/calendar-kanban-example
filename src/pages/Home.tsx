@@ -65,7 +65,6 @@ function Home() {
         ) : (
           <WeekChangeScrollAnimation>
             <div ref={mainRef} className="h-full hidden md:grid md:grid-cols-7">
-              {/** Desktop layout remains unchanged */}
               {weekDates.map((date, index) => (
                 <Day date={date} key={index} index={index} />
               ))}

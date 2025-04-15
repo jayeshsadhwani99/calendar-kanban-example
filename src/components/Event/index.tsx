@@ -40,7 +40,7 @@ function Event(props: EventType & { date: Date }) {
           isMobile ? "" : "shadow-sm"
         } ${
           currentDraggedEventData?.id === id && isMobile ? "!opacity-50" : ""
-        } rounded-xl overflow-hidden cursor-pointer active:cursor-grabbing z-10 select-none touch-none`}>
+        } rounded-xl overflow-hidden cursor-pointer active:cursor-grabbing z-10 select-none touch-none max-w-full`}>
         <motion.div layout layoutId={`event-image-container-${id}`}>
           <img
             src={imageUrl}

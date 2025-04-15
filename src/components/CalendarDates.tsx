@@ -7,7 +7,7 @@ function CalendarDates() {
   const { weekDates, handleDayClick, selectedDayIndex } = useCalendar();
 
   return (
-    <div className="top-0 bg-white border-b z-10 py-3 flex items-center">
+    <div className="top-0 bg-zinc-100 border-b z-10 py-3 flex items-center">
       <WeekChangeScrollAnimation>
         <div className="flex flex-1 justify-between relative">
           {weekDates.map((date, index) => {
