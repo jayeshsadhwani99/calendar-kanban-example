@@ -1,6 +1,7 @@
 import { useCalendar } from "../contexts";
 import { AnimationControls } from "motion/react";
 import { formatDate } from "../utils";
+import { DRAG_DAY_THRESHOLD } from "../constants";
 
 interface UseActiveDateOnScrollProps {
   containerRef: React.RefObject<HTMLElement | null>;
@@ -30,7 +31,7 @@ export function useActiveDateOnScroll({
     if (!dayElem) return;
 
     const dayWidth = dayElem.getBoundingClientRect().width;
-    const threshold = dayWidth / 2;
+    const threshold = dayWidth * DRAG_DAY_THRESHOLD;
     const xOffset = info.offset.x;
 
     // If the drag offset is less than half the day width, snap back to the current day.

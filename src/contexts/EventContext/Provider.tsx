@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import sampleEvents, { EventsByDate } from "../../data/demo";
 import { EventProviderProps } from "./types";
 import { EventContext } from "./Context";
@@ -6,10 +6,10 @@ import { EventContext } from "./Context";
 export const EventProvider: React.FC<EventProviderProps> = ({
   children,
 }: EventProviderProps) => {
-  // We initialize events from your sample events data.
   const [eventsByDate, setEventsByDate] = useState<EventsByDate>(sampleEvents);
   const [currentDraggedEventData, setCurrentDraggedEventData] =
     useState(undefined);
+  const [dragCoordinates, setDragCoordinates] = useState({ x: 0, y: 0 });
 
   const moveEvent = (eventId: string, fromDate: string, toDate: string) => {
     setEventsByDate((prev) => {
@@ -37,6 +37,8 @@ export const EventProvider: React.FC<EventProviderProps> = ({
         moveEvent,
         currentDraggedEventData,
         setCurrentDraggedEventData,
+        dragCoordinates,
+        setDragCoordinates,
       }}>
       {children}
     </EventContext.Provider>

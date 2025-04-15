@@ -1,20 +1,20 @@
-import { Event as EventType } from "../../data/demo";
-import { motion } from "motion/react";
-import DropIndicator from "../DropIndicator";
-import { formatDate, isMobile } from "../../utils";
+// Event.tsx
 import { useNavigate } from "react-router-dom";
-import { useDragEventsForEvent } from "./hooks";
+import { motion } from "motion/react";
 import { useEventContext } from "../../contexts/EventContext";
+import { isMobile, formatDate } from "../../utils";
+import DropIndicator from "../DropIndicator";
+import { useDragEventsForEvent } from "./hooks";
 
-function Event(props: EventType & { date: Date }) {
+function Event(props: any & { date: Date }) {
   const { id, title, description, imageUrl, time, date } = props;
   const navigate = useNavigate();
   const { currentDraggedEventData } = useEventContext();
   const {
-    handleDragStart,
     handleDeselectItem,
     handleTouchStart,
     handleTouchEnd,
+    handleDragStart,
   } = useDragEventsForEvent({ id, date });
 
   const navigateToEvent = () => {

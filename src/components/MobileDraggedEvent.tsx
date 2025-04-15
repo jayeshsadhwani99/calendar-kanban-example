@@ -1,9 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, AnimatePresence, PanInfo } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useEventContext } from "../contexts/EventContext";
-import { formatDate, getTomorrow, getYesterday } from "../utils";
-import { useCalendar } from "../contexts";
+import { formatDate } from "../utils";
 
 type MobileDraggedEventProps = {
   id: string;
@@ -11,12 +10,13 @@ type MobileDraggedEventProps = {
 };
 
 function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
-  const { eventsByDate, moveEvent, setCurrentDraggedEventData } =
-    useEventContext();
+  const { eventsByDate, dragCoordinates } = useEventContext();
   const event = eventsByDate?.[formatDate(date)]?.find((e) => e.id === id);
   const draggedEventRef = useRef<HTMLDivElement>(null);
-  const { setActiveDate, weekDates, selectedDayIndex } = useCalendar();
-  const timeoutRef = useRef<number>(undefined);
+  const [coordinates, setCoordinates] = useState({
+    x: 0,
+    y: 0,
+  });
 
   const setDimensions = () => {
     if (!draggedEventRef.current) return;
@@ -27,32 +27,11 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
       draggedEventRef.current!.style.height = `${height}px`;
       draggedEventRef.current!.style.left = `${x}px`;
       draggedEventRef.current!.style.top = `${y}px`;
+      setCoordinates({
+        x,
+        y,
+      });
     }
-  };
-
-  const handleDrag = (_: any, info: PanInfo) => {
-    if (info.point.x < 50) {
-      timeoutRef.current = setTimeout(() => {
-        const activeDate = weekDates[selectedDayIndex];
-        setActiveDate(getYesterday(activeDate));
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      }, 1000);
-    } else if (info.point.x > window.innerWidth - 50) {
-      timeoutRef.current = setTimeout(() => {
-        const activeDate = weekDates[selectedDayIndex];
-        setActiveDate(getTomorrow(activeDate));
-        if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      }, 1000);
-    } else {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    }
-  };
-
-  const handleDragEnd = () => {
-    const activeDate = weekDates[selectedDayIndex];
-    if (eventsByDate[formatDate(activeDate)]?.find((e) => e.id === id)) return;
-    moveEvent(id, formatDate(date), formatDate(activeDate));
-    setCurrentDraggedEventData(undefined);
   };
 
   useEffect(() => {
@@ -66,7 +45,10 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
   }, [draggedEventRef.current]);
 
   const portalStyles: React.CSSProperties = {
-    position: "absolute",
+    position: "fixed",
+    left: dragCoordinates?.x || 0,
+    top: dragCoordinates?.y || 0,
+    translate: dragCoordinates?.x && dragCoordinates.y ? "-50% -50%" : "",
     zIndex: 20,
   };
 
@@ -76,18 +58,18 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0.5, scale: 0.8, z: 10 }}
-        animate={{ opacity: 1, scale: 1, z: 20 }}
+        animate={{
+          opacity: 1,
+          scale: 1,
+          z: 20,
+        }}
+        exit={{ opacity: 0.5, left: coordinates.x, top: coordinates.y }}
         transition={{ type: "spring" }}
         id={`dragged-event-${id}`}
-        drag={true}
         onClick={(e) => e.stopPropagation()}
-        dragSnapToOrigin={true}
-        dragConstraints={{}}
         ref={draggedEventRef}
-        onDrag={handleDrag}
-        onDragEnd={handleDragEnd}
         style={portalStyles}>
-        <div className="shadow-sm rounded-xl overflow-hidden bg-white">
+        <div className="shadow-lg rounded-xl overflow-hidden bg-white">
           <div>
             <img
               src={event.imageUrl}

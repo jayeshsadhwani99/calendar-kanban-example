@@ -5,4 +5,6 @@ export interface EventContextType {
   moveEvent: (eventId: string, fromDate: string, toDate: string) => void;
   currentDraggedEventData: any;
   setCurrentDraggedEventData: (data: any) => void;
+  dragCoordinates: { x: number; y: number };
+  setDragCoordinates: (coordinates: { x: number; y: number }) => void;
 }

@@ -8,7 +8,7 @@ import EventDetails from "../components/EventDetails";
 import { AnimatePresence, motion, useAnimation } from "motion/react";
 import WeekChangeScrollAnimation from "../components/Animations/WeekChangeScrollAnimation";
 import { isMobile } from "../utils";
-import { useActiveDateOnScroll } from "../hooks";
+import { useActiveDateOnScroll, useHandleDrag } from "../hooks";
 import { useEventContext } from "../contexts/EventContext";
 import MobileDraggedEvent from "../components/MobileDraggedEvent";
 
@@ -17,6 +17,8 @@ function Home() {
   const { weekDates, selectedDayIndex } = useCalendar();
   const { currentDraggedEventData, setCurrentDraggedEventData } =
     useEventContext();
+  const { handleTouchEnd, handleTouchMove, handleTouchCancel } =
+    useHandleDrag();
 
   const mainRef = useRef<HTMLDivElement>(null);
   const controls = useAnimation();
@@ -46,6 +48,9 @@ function Home() {
 
   return (
     <div
+      onTouchMove={handleTouchMove}
+      onTouchCancel={handleTouchCancel}
+      onTouchEnd={handleTouchEnd}
       onClick={handleDeselectItem}
       className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
       <Header />

@@ -14,12 +14,10 @@ export const useDragEventsForEvent = ({
   const touchTimerRef = useRef<number | null>(null);
 
   const handleTouchStart = () => {
+    // Clear any existing state
     setCurrentDraggedEventData(undefined);
     touchTimerRef.current = setTimeout(() => {
-      setCurrentDraggedEventData({
-        id,
-        date,
-      });
+      setCurrentDraggedEventData({ id, date });
     }, TOUCH_TIMEOUT_PHONE);
   };
 
@@ -35,10 +33,7 @@ export const useDragEventsForEvent = ({
   };
 
   const handleDragStart = () => {
-    setCurrentDraggedEventData({
-      id,
-      date,
-    });
+    setCurrentDraggedEventData({ id, date });
   };
 
   return {
