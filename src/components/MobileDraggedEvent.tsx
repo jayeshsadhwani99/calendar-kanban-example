@@ -69,7 +69,8 @@ function MobileDraggedEvent({ id, date }: MobileDraggedEventProps) {
         id={`dragged-event-${id}`}
         onClick={(e) => e.stopPropagation()}
         ref={draggedEventRef}
-        style={portalStyles}>
+        style={portalStyles}
+        className="select-none">
         <div className="shadow-lg rounded-xl overflow-hidden bg-white">
           <div>
             <img

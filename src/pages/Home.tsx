@@ -53,8 +53,10 @@ function Home() {
       onTouchEnd={handleTouchEnd}
       onClick={handleDeselectItem}
       className="flex flex-col h-screen w-screen overflow-hidden bg-gray-50">
-      <Header />
-      <CalendarDates />
+      <div className="sticky top-0">
+        <Header />
+        <CalendarDates />
+      </div>
       <div className="flex-1 overflow-auto overflow-x-hidden">
         {isMobile ? (
           <motion.div
